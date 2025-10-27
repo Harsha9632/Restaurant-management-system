@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Restaurant Management Dashboard" />
+    <title>Restaurant App Dashboard</title>
+
+    
+    <script src="https://unpkg.com/rrweb@latest/dist/rrweb.min.js"></script>
+    <script src="https://d2adkz2s9zrlge.cloudfront.net/rrweb-recorder-20250919-1.js"></script>
+
+    
+    <script>
+      (function () {
+        var visualEditsEnabled = '%REACT_APP_ENABLE_VISUAL_EDITS%'; 
+
+        if (window.self !== window.top && visualEditsEnabled === 'true') {
+          
+          var debugScript = document.createElement('script');
+          debugScript.src = 'https://assets.emergent.sh/scripts/debug-monitor.js';
+          debugScript.async = true;
+          document.head.appendChild(debugScript);
+
+          
+          window.tailwind = window.tailwind || {};
+          window.tailwind.config = {
+            corePlugins: { preflight: false },
+          };
+          var tailwindScript = document.createElement('script');
+          tailwindScript.src = 'https://cdn.tailwindcss.com';
+          tailwindScript.async = true;
+          document.head.appendChild(tailwindScript);
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+
+    
+    <script>
+      (function (document, posthogInstance) {
+        if (posthogInstance.__SV) return;
+        window.posthog = posthogInstance;
+        posthogInstance._i = posthogInstance._i || [];
+        posthogInstance.init = function (token, options, name) {
+          function makeStub(obj, methodName) {
+            var parts = methodName.split('.');
+            if (parts.length === 2) {
+              obj = obj[parts[0]];
+              methodName = parts[1];
+            }
+            obj[methodName] = function () {
+              obj.push([methodName].concat(Array.prototype.slice.call(arguments, 0)));
+            };
+          }
+
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.crossOrigin = 'anonymous';
+          script.async = true;
+          script.src =
+            options.api_host.replace('.i.posthog.com', '-assets.i.posthog.com') +
+            '/static/array.js';
+          var first = document.getElementsByTagName('script')[0];
+          first.parentNode.insertBefore(script, first);
+
+          var ph = posthogInstance;
+          var methods = (
+            'init me ws ys ps bs capture je Di ks register register_once register_for_session unregister unregister_for_session Ps getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Es $s createPersonProfile Is opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Ss debug xs getPageViewId captureTraceFeedback captureTraceMetric'
+          ).split(' ');
+
+          for (var i = 0; i < methods.length; i++) {
+            makeStub(posthogInstance, methods[i]);
+          }
+
+          posthogInstance._i.push([token, options, name]);
+        };
+
+        posthogInstance.__SV = 1;
+      })(document, window.posthog || []);
+
+      
+      posthog.init('phc_yJW1VjHGGwmCbbrtczfqqNxgBDbhlhOWcdzcIJEOTFE', {
+        api_host: 'https://us.i.posthog.com',
+        person_profiles: 'identified_only',
+      });
+    </script>
+  </body>
+</html>
+
+
