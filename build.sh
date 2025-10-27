@@ -1,14 +1,17 @@
 
-set -euo pipefail
+set -euxo pipefail
 
-echo "Finding requirements.txt..."
-REQ=$(find . -maxdepth 4 -type f -name "requirements.txt" | head -n 1 || true)
-if [ -z "$REQ" ]; then
-  echo "ERROR: requirements.txt not found within 4 levels."
-  exit 1
-fi
+echo "🔧 Installing backend dependencies..."
+pip install -r backend/requirements.txt
 
-echo "Using requirements file: $REQ"
-python -m pip install --upgrade pip
-python -m pip install -r "$REQ"
-echo "Dependencies installed."
+echo "📦 Building frontend..."
+cd frontend
+npm install
+npm run build
+
+echo "📂 Copying React build into backend/static..."
+rm -rf ../backend/static/*
+cp -r build/* ../backend/static/
+
+echo "✅ Build completed successfully!"
+
