@@ -1,4 +1,4 @@
-# backend/server.py
+
 import os
 import logging
 import random
@@ -14,11 +14,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from motor.motor_asyncio import AsyncIOMotorClient
 
-# load .env locally (won't be used in Render; Render uses its Environment variables)
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
 
-# Prefer MONGO_URI, fallback to MONGO_URL for compatibility.
+
 MONGO_URI = os.getenv("MONGO_URI") or os.getenv("MONGO_URL")
 if not MONGO_URI:
     raise RuntimeError(
@@ -27,17 +27,17 @@ if not MONGO_URI:
 
 DB_NAME = os.getenv("DB_NAME", "restaurant")
 
-# Create DB client (motor async)
+
 client = AsyncIOMotorClient(MONGO_URI)
 db = client.get_database(DB_NAME)
 
-# Create the main app and API router
+
 app = FastAPI(title="Restaurant Management API")
 api_router = APIRouter(prefix="/api")
 
-# --- CORS middleware (single place) ---
+
 cors_origins = os.getenv("CORS_ORIGINS", "*")
-# Render stores comma-separated origins; split unless it's exactly '*'
+
 if cors_origins.strip() == "*":
     allow_origins = ["*"]
 else:
@@ -51,13 +51,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Serve frontend static files if built into backend/static ---
 static_dir = os.path.join(ROOT_DIR, "static")
 if os.path.isdir(static_dir):
-    # serve static files under /static
+    
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
-# ==================== MODELS ====================
 class MenuItem(BaseModel):
     id: str
     name: str
@@ -148,7 +146,7 @@ class Analytics(BaseModel):
     revenueByDay: List[dict]
     chefOrderDistribution: List[dict]
 
-# ==================== UTILITIES ====================
+
 async def get_next_order_number():
     count = await db.orders.count_documents({})
     return f"{count + 108}"
@@ -179,7 +177,7 @@ async def calculate_order_timing(items):
             total_time += menu_item['averagePreparationTime'] * item['quantity']
     return total_time * 60
 
-# ==================== ROUTES ====================
+
 @api_router.post("/menu", response_model=MenuItem)
 async def create_menu_item(item: MenuItemCreate):
     item_id = f"menu_{datetime.now().timestamp()}"
@@ -449,10 +447,10 @@ async def get_analytics():
         chefOrderDistribution=chef_distribution
     )
 
-# Include the router in the main app
+
 app.include_router(api_router)
 
-# Logging
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -463,7 +461,7 @@ logger = logging.getLogger(__name__)
 async def shutdown_db_client():
     client.close()
 
-# SPA fallback for any non-API path (place this last so /api/* is handled by router)
+
 @app.get("/{full_path:path}", include_in_schema=False)
 async def serve_spa(full_path: str):
     index_path = os.path.join(static_dir, "index.html")
