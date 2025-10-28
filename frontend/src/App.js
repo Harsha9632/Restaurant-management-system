@@ -49,7 +49,7 @@ function App() {
 
         
         <Route
-          path="*"
+      
           element={
             <div style={{ padding: 40, fontSize: 18 }}>
               404 — No matching app route — React pathname: {window.location.pathname}
