@@ -12,7 +12,7 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 async def seed_database():
-    print("🌱 Starting database seeding...")
+    print("Starting database seeding...")
     
     
     await db.menu_items.delete_many({})
@@ -20,7 +20,7 @@ async def seed_database():
     await db.orders.delete_many({})
     await db.customers.delete_many({})
     await db.chefs.delete_many({})
-    print("✅ Cleared existing data")
+    print("Cleared existing data")
     
     
     chefs = [
@@ -30,7 +30,7 @@ async def seed_database():
         {"id": "chef_4", "name": "Madhu", "currentOrders": 0}
     ]
     await db.chefs.insert_many(chefs)
-    print(f"✅ Created {len(chefs)} chefs")
+    print(f" Created {len(chefs)} chefs")
     
     
     menu_items = [
@@ -97,7 +97,7 @@ async def seed_database():
         {"id": "menu_dessert_8", "name": "Panna Cotta", "description": "Italian cream dessert", "price": 150, "category": "Dessert", "stock": 25, "averagePreparationTime": 5, "imageUrl": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400"},
     ]
     await db.menu_items.insert_many(menu_items)
-    print(f"✅ Created {len(menu_items)} menu items")
+    print(f"Created {len(menu_items)} menu items")
     
     
     tables = []
@@ -112,9 +112,9 @@ async def seed_database():
             "customerId": None
         })
     await db.tables.insert_many(tables)
-    print(f"✅ Created {len(tables)} tables")
+    print(f" Created {len(tables)} tables")
     
-    print("🎉 Database seeding completed successfully!")
+    print("Database seeding completed successfully!")
     client.close()
 
 if __name__ == "__main__":
