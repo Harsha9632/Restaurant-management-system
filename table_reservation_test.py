@@ -1,15 +1,11 @@
-#!/usr/bin/env python3
-"""
-Table Reservation Auto-Unreserve Test
-Tests the critical bug fix for table reservation/unreservation logic
-"""
+
 
 import requests
 import json
 import time
 from datetime import datetime
 
-# Get backend URL from frontend .env file
+
 def get_backend_url():
     try:
         with open('/app/frontend/.env', 'r') as f:
@@ -42,7 +38,7 @@ def test_table_reservation_auto_unreserve():
     
     print("\n=== Table Reservation Auto-Unreserve Test ===")
     
-    # Step 1: Create a test menu item with very short preparation time
+    
     print("1. Creating test menu item with short preparation time...")
     test_menu_item = {
         "name": "Quick Test Item",
@@ -50,7 +46,7 @@ def test_table_reservation_auto_unreserve():
         "price": 10.0,
         "category": "Test",
         "stock": 100,
-        "averagePreparationTime": 1  # 1 minute = 60 seconds
+        "averagePreparationTime": 1  
     }
     
     try:
@@ -60,7 +56,7 @@ def test_table_reservation_auto_unreserve():
                                     timeout=10)
         if menu_response.status_code != 200:
             print(f"❌ Failed to create test menu item: {menu_response.status_code}")
-            # Fallback to existing menu items
+        
             menu_response = requests.get(f"{API_BASE}/menu", timeout=10)
             if menu_response.status_code != 200:
                 print(f"❌ Failed to get menu items: {menu_response.status_code}")
@@ -79,7 +75,7 @@ def test_table_reservation_auto_unreserve():
         print(f"❌ Error with menu items: {e}")
         return False
     
-    # Step 2: Check initial table status
+    
     print("\n2. Checking initial Table 1 status...")
     try:
         tables_response = requests.get(f"{API_BASE}/tables", timeout=10)
@@ -100,14 +96,14 @@ def test_table_reservation_auto_unreserve():
         
         print(f"✅ Table 1 initial status: {table_1['status']}")
         
-        # If table is reserved, we need to wait or find another approach
+        
         if table_1['status'] == 'reserved':
             print("⚠️  Table 1 is currently reserved, waiting for it to become available...")
             # Try to unreserve by fetching orders first
             requests.get(f"{API_BASE}/orders", timeout=10)
             time.sleep(2)
             
-            # Check again
+            
             tables_response = requests.get(f"{API_BASE}/tables", timeout=10)
             tables = tables_response.json()
             for table in tables:
@@ -123,7 +119,6 @@ def test_table_reservation_auto_unreserve():
         print(f"❌ Error checking table status: {e}")
         return False
     
-    # Step 3: Create first dine-in order with short processing time
     print("\n3. Creating first dine-in order for Table 1...")
     order_data_1 = {
         "tableNumber": 1,
@@ -162,7 +157,7 @@ def test_table_reservation_auto_unreserve():
         print(f"❌ Error creating first order: {e}")
         return False
     
-    # Step 4: Verify table becomes reserved
+
     print("\n4. Verifying Table 1 is now reserved...")
     try:
         tables_response = requests.get(f"{API_BASE}/tables", timeout=10)
@@ -184,12 +179,12 @@ def test_table_reservation_auto_unreserve():
         print(f"❌ Error checking table reservation: {e}")
         return False
     
-    # Step 5: Wait for processing time to complete (add small buffer)
-    wait_time = min(processing_time + 5, 70)  # Cap at 70 seconds for testing
+    
+    wait_time = min(processing_time + 5, 70)  
     print(f"\n5. Waiting {wait_time} seconds for order processing to complete...")
     time.sleep(wait_time)
     
-    # Step 6: Fetch all orders to trigger auto-unreserve logic
+    
     print("\n6. Fetching all orders to trigger auto-unreserve logic...")
     try:
         orders_response = requests.get(f"{API_BASE}/orders", timeout=10)
@@ -200,7 +195,7 @@ def test_table_reservation_auto_unreserve():
         orders = orders_response.json()
         print(f"✅ Fetched {len(orders)} orders")
         
-        # Find our order and check its status
+        
         our_order = None
         for order in orders:
             if order['id'] == first_order_id:
@@ -215,7 +210,7 @@ def test_table_reservation_auto_unreserve():
         print(f"❌ Error fetching orders: {e}")
         return False
     
-    # Step 7: Verify table is now available
+
     print("\n7. Verifying Table 1 is now available...")
     try:
         tables_response = requests.get(f"{API_BASE}/tables", timeout=10)
@@ -237,7 +232,7 @@ def test_table_reservation_auto_unreserve():
         print(f"❌ Error checking table unreservation: {e}")
         return False
     
-    # Step 8: Create second dine-in order for same table (should succeed)
+    
     print("\n8. Creating second dine-in order for Table 1...")
     order_data_2 = {
         "tableNumber": 1,
@@ -271,10 +266,10 @@ def test_table_reservation_auto_unreserve():
         print(f"❌ Error creating second order: {e}")
         return False
     
-    # Step 9: Test individual order fetch (get_order endpoint)
+    
     print("\n9. Testing individual order fetch for auto-unreserve...")
     try:
-        # Create a third order to test individual fetch
+        
         order_data_3 = {
             "tableNumber": 1,
             "customerName": "Bob Wilson",
@@ -299,16 +294,16 @@ def test_table_reservation_auto_unreserve():
             third_order = order_response_3.json()
             third_order_id = third_order['id']
             
-            # Wait for processing time
+            
             time.sleep(min(third_order['processingTime'] + 2, 15))
             
-            # Fetch individual order to trigger unreserve
+            
             individual_order_response = requests.get(f"{API_BASE}/orders/{third_order_id}", timeout=10)
             
             if individual_order_response.status_code == 200:
                 print("✅ Individual order fetch works")
                 
-                # Check if table was unreserved
+        
                 tables_response = requests.get(f"{API_BASE}/tables", timeout=10)
                 tables = tables_response.json()
                 
