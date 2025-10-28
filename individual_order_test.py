@@ -1,12 +1,8 @@
-#!/usr/bin/env python3
-"""
-Test individual order fetch auto-unreserve functionality
-"""
+
 
 import requests
 import time
 
-# Get backend URL from frontend .env file
 def get_backend_url():
     try:
         with open('/app/frontend/.env', 'r') as f:
@@ -25,7 +21,7 @@ def test_individual_order_unreserve():
     
     print("=== Testing Individual Order Fetch Auto-Unreserve ===")
     
-    # Get our test menu item
+    
     menu_response = requests.get(f"{API_BASE}/menu", timeout=10)
     menu_items = menu_response.json()
     test_item = None
@@ -38,7 +34,7 @@ def test_individual_order_unreserve():
         print("❌ Test menu item not found")
         return False
     
-    # Create order for Table 1
+    
     order_data = {
         "tableNumber": 1,
         "customerName": "Individual Test User",
@@ -54,7 +50,6 @@ def test_individual_order_unreserve():
         "type": "dinein"
     }
     
-    # Create order
     order_response = requests.post(f"{API_BASE}/orders", 
                                  json=order_data, 
                                  headers={'Content-Type': 'application/json'},
@@ -70,7 +65,7 @@ def test_individual_order_unreserve():
     
     print(f"✅ Created order {order['orderNumber']} with {processing_time}s processing time")
     
-    # Verify table is reserved
+
     tables_response = requests.get(f"{API_BASE}/tables", timeout=10)
     tables = tables_response.json()
     table_1 = next((t for t in tables if t['number'] == 1), None)
@@ -81,12 +76,12 @@ def test_individual_order_unreserve():
     
     print("✅ Table 1 is reserved")
     
-    # Wait for processing time to complete
+
     wait_time = processing_time + 5
     print(f"⏳ Waiting {wait_time} seconds for processing to complete...")
     time.sleep(wait_time)
     
-    # Fetch individual order (this should trigger unreserve)
+    
     individual_response = requests.get(f"{API_BASE}/orders/{order_id}", timeout=10)
     
     if individual_response.status_code != 200:
@@ -96,7 +91,7 @@ def test_individual_order_unreserve():
     fetched_order = individual_response.json()
     print(f"✅ Fetched individual order - Status: {fetched_order['status']}, Remaining: {fetched_order['remainingTime']}s")
     
-    # Check if table is now available
+    
     tables_response = requests.get(f"{API_BASE}/tables", timeout=10)
     tables = tables_response.json()
     table_1_after = next((t for t in tables if t['number'] == 1), None)
